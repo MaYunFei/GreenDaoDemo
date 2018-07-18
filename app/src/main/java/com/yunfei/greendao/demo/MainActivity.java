@@ -5,10 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.yunfei.greendao.demo.bean.Chapter;
+import com.yunfei.greendao.demo.bean.GoodsCourse;
+import com.yunfei.greendao.demo.bean.Lecture;
+import com.yunfei.greendao.demo.db.greendao.ChapterDao;
 import com.yunfei.greendao.demo.db.greendao.ClazzDao;
 import com.yunfei.greendao.demo.db.greendao.DaoMaster;
 import com.yunfei.greendao.demo.db.greendao.DaoSession;
+import com.yunfei.greendao.demo.db.greendao.GoodsCourseDao;
 import com.yunfei.greendao.demo.db.greendao.IDCardDao;
+import com.yunfei.greendao.demo.db.greendao.LectureDao;
 import com.yunfei.greendao.demo.db.greendao.SchoolDao;
 import com.yunfei.greendao.demo.db.greendao.StudentDao;
 
@@ -28,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private ClazzDao clazzDao;
     private StudentDao studentDao;
     private IDCardDao idCardDao;
+    private GoodsCourseDao goodsCourseDao;
+    private ChapterDao chapterDao;
+    private LectureDao lectureDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,59 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
 
+//        testJoin();
+
+//        for (int i = 0; i < 10; i++) {
+//            GoodsCourse goodsCourse = new GoodsCourse();
+//            goodsCourse.setCourseId("--"+i);
+//            goodsCourse.setCourseName("冲刺 " +i);
+//            goodsCourse.setCwCourseId("=="+i);
+//            if (goodsCourseDao.queryBuilder().where(GoodsCourseDao.Properties.CourseId.eq(goodsCourse.getCourseId())).count()==0) {
+//                goodsCourseDao.insertOrReplace(goodsCourse);
+//            }
+//
+//            for (int j = 0; j < 10; j++) {
+//                Chapter chapter = new Chapter();
+//                chapter.setChapterId("chapter"+i+""+j);
+//                chapter.setChapterName("name"+i+""+j);
+//                chapter.setChapterSort("name"+i+""+j);
+//                chapter.setCourseId("--"+i);
+//                if (chapterDao.queryBuilder().where(ChapterDao.Properties.ChapterId.eq(chapter.getChapterId())).count() == 0) {
+//                    chapterDao.insertOrReplace(chapter);
+//                }
+//
+//                for (int k = 0; k < 10; k++) {
+//                    Lecture lecture = new Lecture();
+//                    lecture.setChapterId("chapter"+i+""+j);
+//                    lecture.setLectureId("lecture"+i+" " +" " +j +" " +k);
+//                    lecture.setLectureNo(k+"");
+//                    lecture.setLectureSort(k+"");
+//                    lecture.setLectureName("lecture " + k);
+//                    if (lectureDao.queryBuilder().where(LectureDao.Properties.LectureId.eq(lecture.getLectureId())).count() == 0) {
+//                        lectureDao.insertOrReplace(lecture);
+//                    }
+//                }
+//            }
+//        }
+//
+
+
+        for (GoodsCourse goodsCourse : goodsCourseDao.queryBuilder().list()) {
+            List<Chapter> chapterList = goodsCourse.getChapterList();
+            for (int i = 0; i < chapterList.size(); i++) {
+                Log.i("TEST",chapterList.get(i).toString());
+            }
+        }
+
+
+
+
+
+
+
+    }
+
+    private void testJoin() {
         QueryBuilder<IDCard> idCardQueryBuilder = idCardDao.queryBuilder();
 
         Join studnet = idCardQueryBuilder.join(IDCardDao.Properties.Id, Student.class,StudentDao.Properties.CardId);
@@ -61,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("66666","   fff  "+idCard.getCardName());
             }
         }
-
     }
 
     private void initDB() {
@@ -75,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
         clazzDao = daoSession.getClazzDao();
         studentDao = daoSession.getStudentDao();
         idCardDao = daoSession.getIDCardDao();
+        goodsCourseDao = daoSession.getGoodsCourseDao();
+        chapterDao = daoSession.getChapterDao();
+        lectureDao = daoSession.getLectureDao();
+
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;
     }
